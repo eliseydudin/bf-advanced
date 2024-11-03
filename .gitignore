@@ -2,3 +2,7 @@
 .DS_Store
 # Meson build directory
 builddir/
+# Clang compile_commands
+compile_commands.json
+# Cache
+.cache/

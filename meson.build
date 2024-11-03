@@ -1,8 +1,8 @@
-project('fkys-jit', 'c')
+project('fkys', ['c', 'cpp'])
 
-sources = []
-dependencies = []
+sources = ['src/main.c']
+dependencies = [dependency('llvm')]
 
 executable(
-    'fkys-jit', sources, dependencies: dependencies
+    'fkys', sources, dependencies: dependencies
 )
