@@ -1,3 +1,4 @@
 # OSX Directory data
 .DS_Store
-
+# Meson build directory
+builddir/
