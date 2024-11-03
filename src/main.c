@@ -45,7 +45,7 @@ int main(int argc, const char *argv[]) {
             LLVMBuildAdd(builder, current_index_value, llvm_one, "_index");
         break;
       default:
-        printf("Unknown character: %dn", ch);
+        printf("Unknown character: %d\n", ch);
         return 1;
     }
 
