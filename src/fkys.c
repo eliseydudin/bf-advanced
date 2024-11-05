@@ -10,9 +10,13 @@ void fkys_state_new(struct fkys_state *state) {
 
   state->types.i32 = LLVMInt32TypeInContext(state->ctx);
   state->types.main = LLVMFunctionType(state->types.i32, NULL, 0, 0);
+  state->types.putchar_type =
+      LLVMFunctionType(state->types.i32, &state->types.i32, 1, 0);
 
   state->constants.zero = LLVMConstInt(state->types.i32, 0, 0);
   state->constants.one = LLVMConstInt(state->types.i32, 1, 0);
+  state->constants.putchar =
+      LLVMAddFunction(state->module, "putchar", state->types.putchar_type);
 
   state->main.main_fn =
       LLVMAddFunction(state->module, "main", state->types.main);

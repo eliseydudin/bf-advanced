@@ -10,11 +10,13 @@ struct fkys_values {
 
 struct fkys_constants {
   LLVMValueRef zero, one;
+  LLVMValueRef putchar;
 };
 
 struct fkys_types {
   LLVMTypeRef i32;
   LLVMTypeRef main;
+  LLVMTypeRef putchar_type;
 };
 
 struct fkys_main {
@@ -38,8 +40,10 @@ void fkys_dump_to_cli(struct fkys_state *state);
 void fkys_state_finish(struct fkys_state *state);
 
 void fkys_return_zero(struct fkys_state *state);
+
 LLVMValueRef fkys_get_index(struct fkys_state *state);
 void fkys_set_index(struct fkys_state *state, LLVMValueRef val);
+
 void fkys_incr(struct fkys_state *state, LLVMValueRef *value);
 
 #endif
