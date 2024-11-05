@@ -43,6 +43,7 @@ void fkys_dump_to_cli(struct fkys_state *state);
 void fkys_state_finish(struct fkys_state *state);
 
 void fkys_return_zero(struct fkys_state *state);
+void fkys_return_value(struct fkys_state *state, LLVMValueRef value);
 
 LLVMValueRef fkys_get_index(struct fkys_state *state);
 void fkys_set_index(struct fkys_state *state, LLVMValueRef val);

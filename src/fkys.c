@@ -112,4 +112,8 @@ void fkys_array_set(struct fkys_state *state, LLVMValueRef data) {
   LLVMBuildStore(state->builder, data, curr);
 }
 
+void fkys_return_value(struct fkys_state *state, LLVMValueRef value) {
+  LLVMBuildRet(state->builder, value);
+}
+
 #endif

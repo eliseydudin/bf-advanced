@@ -12,7 +12,8 @@ int main(int argc, const char *argv[]) {
   fkys_set_index(&state, tmp);
 
   tmp = fkys_array_get(&state);
-  fkys_putchar(&state, &tmp);
+  fkys_return_value(&state, tmp);
+  //fkys_putchar(&state, &tmp);
 
   fkys_return_zero(&state);
 
