@@ -31,10 +31,12 @@ void fkys_state_new(struct fkys_state *state) {
       LLVMBuildAlloca(state->builder, state->types.i32, "index");
   state->values.array = LLVMBuildArrayAlloca(
       state->builder,
-      state->types.array_ptr,
+      state->types.array,
       state->constants.zero,
       "array"
   );
+
+  fkys_set_index(state, state->constants.zero);
 }
 
 void fkys_dump_to_cli(struct fkys_state *state) {
@@ -88,12 +90,12 @@ void fkys_putchar(struct fkys_state *state, LLVMValueRef *val) {
   );
 }
 
-LLVMValueRef fkys_array_at(struct fkys_state *state) {
+LLVMValueRef fkys_array_at(struct fkys_state *state, LLVMValueRef pos) {
   LLVMValueRef value = LLVMBuildGEP2(
       state->builder,
       state->types.array_ptr,
       state->values.array,
-      &state->values.index,
+      &pos,
       1,
       "tmpptr"
   );
@@ -101,12 +103,12 @@ LLVMValueRef fkys_array_at(struct fkys_state *state) {
 }
 
 LLVMValueRef fkys_array_get(struct fkys_state *state) {
-  LLVMValueRef curr = fkys_array_at(state);
+  LLVMValueRef curr = fkys_array_at(state, fkys_get_index(state));
   return LLVMBuildLoad2(state->builder, state->types.i32, curr, "tmpvalue");
 }
 
 void fkys_array_set(struct fkys_state *state, LLVMValueRef data) {
-  LLVMValueRef curr = fkys_array_at(state);
+  LLVMValueRef curr = fkys_array_at(state, fkys_get_index(state));
   LLVMBuildStore(state->builder, data, curr);
 }
 

@@ -5,12 +5,13 @@ int main(int argc, const char *argv[]) {
 
   fkys_state_new(&state);
 
-  LLVMValueRef tmp = fkys_get_index(&state);
-  for (int i = 0; i < 100; i++) {
+  LLVMValueRef tmp = fkys_array_get(&state);
+  for (int i = 0; i < 10; i++) {
     fkys_incr(&state, &tmp);
   }
   fkys_set_index(&state, tmp);
 
+  tmp = fkys_array_get(&state);
   fkys_putchar(&state, &tmp);
 
   fkys_return_zero(&state);
