@@ -1,5 +1,5 @@
-#ifndef __FKYS_H__
-#define __FKYS_H__
+#ifndef __BFA_H__
+#define __BFA_H__
 
 #include <llvm-c/Core.h>
 #include <stddef.h>
