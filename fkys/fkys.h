@@ -5,7 +5,8 @@
 #include <stddef.h>
 
 struct fkys_values {
-  LLVMValueRef array, index;
+  LLVMValueRef array;
+  LLVMValueRef index;
 };
 
 struct fkys_constants {
