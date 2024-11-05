@@ -1,6 +1,7 @@
 #ifndef __STATE_H__
 #define __STATE_H__
 
+#include <assert.h>
 #include <fkys/fkys.h>
 
 void fkys_state_new(struct fkys_state *state) {
@@ -59,6 +60,24 @@ void fkys_set_index(struct fkys_state *state, LLVMValueRef val) {
 void fkys_incr(struct fkys_state *state, LLVMValueRef *value) {
   *value =
       LLVMBuildAdd(state->builder, *value, state->constants.one, "tmpindex");
+}
+
+void fkys_decr(struct fkys_state *state, LLVMValueRef *value) {
+  *value =
+      LLVMBuildSub(state->builder, *value, state->constants.one, "tmpindex");
+}
+
+void fkys_putchar(struct fkys_state *state, LLVMValueRef *val) {
+  assert(state->constants.putchar);
+
+  *val = LLVMBuildCall2(
+      state->builder,
+      state->types.putchar_type,
+      state->constants.putchar,
+      val,
+      1,
+      "_"
+  );
 }
 
 #endif

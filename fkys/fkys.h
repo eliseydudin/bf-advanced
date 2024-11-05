@@ -45,5 +45,8 @@ LLVMValueRef fkys_get_index(struct fkys_state *state);
 void fkys_set_index(struct fkys_state *state, LLVMValueRef val);
 
 void fkys_incr(struct fkys_state *state, LLVMValueRef *value);
+void fkys_decr(struct fkys_state *state, LLVMValueRef *value);
+
+void fkys_putchar(struct fkys_state *state, LLVMValueRef *val);
 
 #endif
