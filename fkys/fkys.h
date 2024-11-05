@@ -17,6 +17,8 @@ struct fkys_types {
   LLVMTypeRef i32;
   LLVMTypeRef main;
   LLVMTypeRef putchar_type;
+  LLVMTypeRef array;
+  LLVMTypeRef array_ptr;
 };
 
 struct fkys_main {
@@ -48,5 +50,9 @@ void fkys_incr(struct fkys_state *state, LLVMValueRef *value);
 void fkys_decr(struct fkys_state *state, LLVMValueRef *value);
 
 void fkys_putchar(struct fkys_state *state, LLVMValueRef *val);
+
+LLVMValueRef fkys_array_at(struct fkys_state *state);
+LLVMValueRef fkys_array_get(struct fkys_state *state);
+void fkys_array_set(struct fkys_state *state, LLVMValueRef data);
 
 #endif
