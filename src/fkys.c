@@ -1,37 +1,7 @@
 #ifndef __STATE_H__
 #define __STATE_H__
 
-#include <llvm-c/Core.h>
-#include <stddef.h>
-
-struct fkys_values {
-  LLVMValueRef array, index;
-};
-
-struct fkys_constants {
-  LLVMValueRef zero, one;
-};
-
-struct fkys_types {
-  LLVMTypeRef i32;
-  LLVMTypeRef main;
-};
-
-struct fkys_main {
-  LLVMBasicBlockRef entry;
-  LLVMValueRef main_fn;
-};
-
-struct fkys_state {
-  LLVMContextRef ctx;
-  LLVMModuleRef module;
-  LLVMBuilderRef builder;
-
-  struct fkys_values values;
-  struct fkys_constants constants;
-  struct fkys_types types;
-  struct fkys_main main;
-};
+#include <fkys/fkys.h>
 
 void fkys_state_new(struct fkys_state *state) {
   state->ctx = LLVMContextCreate();
@@ -62,6 +32,29 @@ void fkys_state_finish(struct fkys_state *state) {
   LLVMDisposeBuilder(state->builder);
   LLVMDisposeModule(state->module);
   LLVMContextDispose(state->ctx);
+}
+
+// operations on values
+void fkys_return_zero(struct fkys_state *state) {
+  LLVMBuildRet(state->builder, state->constants.zero);
+}
+
+LLVMValueRef fkys_get_index(struct fkys_state *state) {
+  return LLVMBuildLoad2(
+      state->builder,
+      state->types.i32,
+      state->values.index,
+      "tmpindex"
+  );
+}
+
+void fkys_set_index(struct fkys_state *state, LLVMValueRef val) {
+  LLVMBuildStore(state->builder, val, state->values.index);
+}
+
+void fkys_incr(struct fkys_state *state, LLVMValueRef *value) {
+  *value =
+      LLVMBuildAdd(state->builder, *value, state->constants.one, "tmpindex");
 }
 
 #endif
