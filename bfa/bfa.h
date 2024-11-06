@@ -39,6 +39,13 @@ void bfa_values_decr_array(struct bfa_state *state, struct bfa_values *values);
 
 struct bfa_state *bfa_state();
 void bfa_state_dealloc(struct bfa_state *);
+void bfa_state_compile(struct bfa_state *);
+void bfa_state_interpret(
+    const char *source,
+    struct bfa_state *,
+    struct bfa_values *,
+    struct bfa_putchar *p
+);
 void bfa_exit(struct bfa_state *);
 
 void bfa_dump_module(struct bfa_state *);

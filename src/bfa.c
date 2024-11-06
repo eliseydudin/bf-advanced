@@ -1,5 +1,9 @@
 #include <assert.h>
 #include <bfa/bfa.h>
+#include <llvm-c/BitWriter.h>
+#include <llvm-c/ExecutionEngine.h>
+#include <llvm-c/Target.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 static void setup_state_main(struct bfa_state *state) {
@@ -168,4 +172,83 @@ void bfa_putchar_call(
 
 void bfa_putchar_dealloc(struct bfa_putchar *p) {
   free(p);
+}
+
+// compiling
+void bfa_state_compile(struct bfa_state *state) {
+  LLVMInitializeNativeTarget();
+  LLVMInitializeNativeAsmPrinter();
+  LLVMInitializeNativeAsmParser();
+
+  char *error = NULL;
+  LLVMTargetRef target;
+
+  if (LLVMGetTargetFromTriple(LLVMGetDefaultTargetTriple(), &target, &error)
+      != 0) {
+    fprintf(stderr, "Failed to get target: %sn", error);
+    exit(1);
+  }
+  LLVMTargetMachineRef target_machine = LLVMCreateTargetMachine(
+      target,
+      LLVMGetDefaultTargetTriple(),
+      "generic",
+      "",
+      LLVMCodeGenLevelDefault,
+      LLVMRelocDefault,
+      LLVMCodeModelDefault
+  );
+
+  if (LLVMTargetMachineEmitToFile(
+          target_machine,
+          state->module,
+          "bfa.o",
+          LLVMObjectFile,
+          &error
+      )
+      != 0) {
+    fprintf(stderr, "Failed to emit object file: %s\n", error);
+    exit(1);
+  }
+}
+
+void bfa_state_interpret(
+    const char *source,
+    struct bfa_state *state,
+    struct bfa_values *values,
+    struct bfa_putchar *p
+) {
+  char ch;
+  while ((ch = *source++)) {
+    switch (ch) {
+      case '<': {
+        bfa_values_decr(state, values);
+      } break;
+      case '>': {
+        bfa_values_incr(state, values);
+      } break;
+      case '+': {
+        bfa_values_incr_array(state, values);
+      } break;
+      case '-': {
+        bfa_values_decr_array(state, values);
+      } break;
+      case 'o': {
+        LLVMValueRef value = bfa_values_load_ptr(state, values);
+        bfa_putchar_call(p, state, value);
+      } break;
+      case 'e': {
+        bfa_exit(state);
+        return;
+      } break;
+      case ' ':
+      case '\n':
+        break;
+      default: {
+        fprintf(stderr, "Unknown procedure \"%c\"", ch);
+        exit(1);
+      }
+    }
+  }
+
+  bfa_exit(state);
 }
