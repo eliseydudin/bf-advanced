@@ -51,7 +51,7 @@ static void setup_values(struct bfa_state *state, struct bfa_values *values) {
   LLVMTypeRef i32_array = LLVMArrayType(i32, 10000);
   LLVMTypeRef i32_ptr = LLVMPointerType(i32, 0);
 
-  LLVMValueRef zero = LLVMConstInt(i32, 0, 0);
+  LLVMValueRef zero = LLVMConstInt(i32, 1, 0);
 
   values->global_array = LLVMAddGlobal(state->module, i32_array, "array");
   values->ptr = LLVMBuildGEP2(
@@ -60,7 +60,7 @@ static void setup_values(struct bfa_state *state, struct bfa_values *values) {
       values->global_array,
       &zero,
       1,
-      "pointer"
+      "ptr"
   );
 }
 
