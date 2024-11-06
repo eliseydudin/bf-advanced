@@ -2,6 +2,15 @@
 #include <bfa/bfa.h>
 #include <stdlib.h>
 
+static void setup_state_main(struct bfa_state *state) {
+  LLVMTypeRef void_t = LLVMVoidType();
+  LLVMTypeRef main_type = LLVMFunctionType(void_t, NULL, 0, 0);
+  LLVMValueRef main_fn = LLVMAddFunction(state->module, "main", main_type);
+
+  LLVMBasicBlockRef entry = LLVMAppendBasicBlock(main_fn, "entry");
+  LLVMPositionBuilderAtEnd(state->builder, entry);
+}
+
 struct bfa_state *bfa_state() {
   struct bfa_state *state = malloc(sizeof(struct bfa_state));
 
@@ -14,6 +23,8 @@ struct bfa_state *bfa_state() {
   assert(state->context);
   assert(state->module);
   assert(state->builder);
+
+  setup_state_main(state);
 
   return state;
 }
@@ -30,8 +41,12 @@ void bfa_dump_module(struct bfa_state *state) {
   LLVMDumpModule(state->module);
 }
 
+void bfa_exit(struct bfa_state *state) {
+  LLVMBuildRetVoid(state->builder);
+}
+
 // values stuff
-void setup_values(struct bfa_state *state, struct bfa_values *values) {
+static void setup_values(struct bfa_state *state, struct bfa_values *values) {
   LLVMTypeRef i32 = LLVMInt32TypeInContext(state->context);
   LLVMTypeRef i32_array = LLVMArrayType(i32, 10000);
   LLVMTypeRef i32_ptr = LLVMPointerType(i32, 0);
@@ -58,4 +73,14 @@ struct bfa_values *bfa_values(struct bfa_state *state) {
 
 void bfa_values_dealloc(struct bfa_values *values) {
   free(values);
+}
+
+LLVMValueRef
+bfa_values_load_ptr(struct bfa_state *state, struct bfa_values *values) {
+  return LLVMBuildLoad2(
+      state->builder,
+      LLVMInt32TypeInContext(state->context),
+      values->ptr,
+      "ptr"
+  );
 }
