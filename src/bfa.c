@@ -123,6 +123,22 @@ void bfa_values_decr(struct bfa_state *state, struct bfa_values *values) {
   );
 }
 
+void bfa_values_incr_array(struct bfa_state *state, struct bfa_values *values) {
+  LLVMTypeRef i32 = LLVMInt32TypeInContext(state->context);
+  LLVMValueRef curr = bfa_values_load_ptr(state, values);
+  LLVMValueRef one = LLVMConstInt(i32, 1, 0);
+  curr = LLVMBuildAdd(state->builder, curr, one, "tmp");
+  LLVMBuildStore(state->builder, curr, values->ptr);
+}
+
+void bfa_values_decr_array(struct bfa_state *state, struct bfa_values *values) {
+  LLVMTypeRef i32 = LLVMInt32TypeInContext(state->context);
+  LLVMValueRef curr = bfa_values_load_ptr(state, values);
+  LLVMValueRef one = LLVMConstInt(i32, 1, 0);
+  curr = LLVMBuildSub(state->builder, curr, one, "tmp");
+  LLVMBuildStore(state->builder, curr, values->ptr);
+}
+
 //putchar
 struct bfa_putchar *bfa_putchar(struct bfa_state *state) {
   struct bfa_putchar *putchar = malloc(sizeof(bfa_putchar));

@@ -34,6 +34,8 @@ LLVMValueRef
 bfa_values_load_ptr(struct bfa_state *state, struct bfa_values *values);
 void bfa_values_incr(struct bfa_state *state, struct bfa_values *values);
 void bfa_values_decr(struct bfa_state *state, struct bfa_values *values);
+void bfa_values_incr_array(struct bfa_state *state, struct bfa_values *values);
+void bfa_values_decr_array(struct bfa_state *state, struct bfa_values *values);
 
 struct bfa_state *bfa_state();
 void bfa_state_dealloc(struct bfa_state *);
