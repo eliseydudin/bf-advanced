@@ -9,11 +9,17 @@ struct bfa_state {
   LLVMBuilderRef builder;
 };
 
+struct bfa_values {
+  LLVMValueRef ptr;
+  LLVMValueRef global_array;
+};
+
+struct bfa_values *bfa_values(struct bfa_state *state);
+void bfa_values_dealloc(struct bfa_values *);
+
 struct bfa_state *bfa_state();
-void bfa_state_dealloc(struct bfa_state **);
+void bfa_state_dealloc(struct bfa_state *);
 
 void bfa_dump_module(struct bfa_state *);
-
-#define BFA_CLEANUP __attribute__((cleanup(bfa_state_dealloc)))
 
 #endif
