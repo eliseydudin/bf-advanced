@@ -1,6 +1,7 @@
 #include <bfa/bfa.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 char *read_file(FILE *input) {
   char *array = malloc(4);
@@ -28,7 +29,19 @@ int main(int argc, const char *argv[]) {
     return 1;
   }
 
-  FILE *input = fopen(argv[1], "r");
+  char *filename;
+  int mode = 0; // 0 - normal, 1 - emit llvm
+  for (int i = 1; i < argc; i++) {
+    const char *str = argv[i];
+
+    if (str[0] != '-') {
+      filename = (char *) str;
+    } else if (!strcmp(str, "-emit-llvm")) {
+      mode = 1;
+    }
+  }
+
+  FILE *input = fopen(filename, "r");
   if (input == NULL) {
     fprintf(stderr, "Given file doesn't exist\n");
     fprintf(stderr, "usage: bfa <file>\n");
@@ -43,7 +56,14 @@ int main(int argc, const char *argv[]) {
   bfa_state_interpret(source, state, values, put);
   free(source);
 
-  bfa_state_compile(state);
+  switch (mode) {
+    case 0:
+      bfa_state_compile(state);
+      break;
+    case 1:
+      bfa_dump_module(state);
+      break;
+  }
 
   bfa_putchar_dealloc(put);
   bfa_values_dealloc(values);
