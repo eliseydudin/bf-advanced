@@ -51,9 +51,11 @@ static void setup_values(struct bfa_state *state, struct bfa_values *values) {
   LLVMTypeRef i32_array = LLVMArrayType(i32, 10000);
   LLVMTypeRef i32_ptr = LLVMPointerType(i32, 0);
 
-  LLVMValueRef zero = LLVMConstInt(i32, 1, 0);
+  LLVMValueRef zero = LLVMConstInt(i32, 0, 0);
 
   values->global_array = LLVMAddGlobal(state->module, i32_array, "array");
+  values->index = LLVMBuildAlloca(state->builder, i32, "index");
+  LLVMBuildStore(state->builder, zero, values->index);
   values->ptr = LLVMBuildGEP2(
       state->builder,
       i32_ptr,
@@ -81,6 +83,42 @@ bfa_values_load_ptr(struct bfa_state *state, struct bfa_values *values) {
       state->builder,
       LLVMInt32TypeInContext(state->context),
       values->ptr,
+      "ptr"
+  );
+}
+
+void bfa_values_incr(struct bfa_state *state, struct bfa_values *values) {
+  LLVMTypeRef i32 = LLVMInt32TypeInContext(state->context);
+  LLVMValueRef loaded =
+      LLVMBuildLoad2(state->builder, i32, values->index, "tmp");
+  LLVMValueRef one = LLVMConstInt(i32, 1, 0);
+  loaded = LLVMBuildAdd(state->builder, loaded, one, "tmp");
+  LLVMTypeRef i32_ptr = LLVMPointerType(i32, 0);
+
+  values->ptr = LLVMBuildGEP2(
+      state->builder,
+      i32_ptr,
+      values->global_array,
+      &loaded,
+      1,
+      "ptr"
+  );
+}
+
+void bfa_values_decr(struct bfa_state *state, struct bfa_values *values) {
+  LLVMTypeRef i32 = LLVMInt32TypeInContext(state->context);
+  LLVMValueRef loaded =
+      LLVMBuildLoad2(state->builder, i32, values->index, "tmp");
+  LLVMValueRef one = LLVMConstInt(i32, 1, 0);
+  loaded = LLVMBuildSub(state->builder, loaded, one, "tmp");
+  LLVMTypeRef i32_ptr = LLVMPointerType(i32, 0);
+
+  values->ptr = LLVMBuildGEP2(
+      state->builder,
+      i32_ptr,
+      values->global_array,
+      &loaded,
+      1,
       "ptr"
   );
 }

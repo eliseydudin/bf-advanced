@@ -5,6 +5,7 @@ int main(int argc, const char *argv[]) {
   struct bfa_values *values = bfa_values(state);
   struct bfa_putchar *put = bfa_putchar(state);
 
+  bfa_values_incr(state, values);
   LLVMValueRef tmp = bfa_values_load_ptr(state, values);
   bfa_putchar_call(put, state, tmp);
   bfa_exit(state);
