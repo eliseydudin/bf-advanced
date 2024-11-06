@@ -152,6 +152,10 @@ struct bfa_putchar *bfa_putchar(struct bfa_state *state) {
   putchar->putchar_ref =
       LLVMAddFunction(state->module, "putchar", putchar->putchar_type);
 
+  putchar->getchar_type = LLVMFunctionType(i32, NULL, 0, 0);
+  putchar->getchar_ref =
+      LLVMAddFunction(state->module, "getchar", putchar->getchar_type);
+
   return putchar;
 }
 
@@ -168,6 +172,30 @@ void bfa_putchar_call(
       1,
       "_"
   );
+}
+
+void bfa_getchar_call(
+    struct bfa_putchar *p,
+    struct bfa_state *state,
+    struct bfa_values *values
+) {
+  LLVMValueRef getchar_res = LLVMBuildCall2(
+      state->builder,
+      p->getchar_type,
+      p->getchar_ref,
+      NULL,
+      0,
+      "tmp"
+  );
+  /*
+  LLVMTypeRef i32 = LLVMInt32TypeInContext(state->context);
+  LLVMValueRef curr = bfa_values_load_ptr(state, values);
+  LLVMValueRef one = LLVMConstInt(i32, 1, 0);
+  curr = LLVMBuildAdd(state->builder, curr, one, "tmp");
+  LLVMBuildStore(state->builder, curr, values->ptr);
+  */
+
+  LLVMBuildStore(state->builder, getchar_res, values->ptr);
 }
 
 void bfa_putchar_dealloc(struct bfa_putchar *p) {
@@ -235,6 +263,9 @@ void bfa_state_interpret(
       case 'o': {
         LLVMValueRef value = bfa_values_load_ptr(state, values);
         bfa_putchar_call(p, state, value);
+      } break;
+      case 'p': {
+        bfa_getchar_call(p, state, values);
       } break;
       case 'e': {
         bfa_exit(state);
