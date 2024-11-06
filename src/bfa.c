@@ -84,3 +84,34 @@ bfa_values_load_ptr(struct bfa_state *state, struct bfa_values *values) {
       "ptr"
   );
 }
+
+//putchar
+struct bfa_putchar *bfa_putchar(struct bfa_state *state) {
+  struct bfa_putchar *putchar = malloc(sizeof(bfa_putchar));
+  LLVMTypeRef i32 = LLVMInt32TypeInContext(state->context);
+
+  putchar->putchar_type = LLVMFunctionType(i32, &i32, 1, 0);
+  putchar->putchar_ref =
+      LLVMAddFunction(state->module, "putchar", putchar->putchar_type);
+
+  return putchar;
+}
+
+void bfa_putchar_call(
+    struct bfa_putchar *p,
+    struct bfa_state *state,
+    LLVMValueRef data
+) {
+  LLVMBuildCall2(
+      state->builder,
+      p->putchar_type,
+      p->putchar_ref,
+      &data,
+      1,
+      "_"
+  );
+}
+
+void bfa_putchar_dealloc(struct bfa_putchar *p) {
+  free(p);
+}

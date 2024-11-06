@@ -14,6 +14,19 @@ struct bfa_values {
   LLVMValueRef global_array;
 };
 
+struct bfa_putchar {
+  LLVMValueRef putchar_ref;
+  LLVMTypeRef putchar_type;
+};
+
+struct bfa_putchar *bfa_putchar(struct bfa_state *);
+void bfa_putchar_call(
+    struct bfa_putchar *,
+    struct bfa_state *,
+    LLVMValueRef data
+);
+void bfa_putchar_dealloc(struct bfa_putchar *);
+
 struct bfa_values *bfa_values(struct bfa_state *state);
 void bfa_values_dealloc(struct bfa_values *);
 LLVMValueRef
