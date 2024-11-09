@@ -143,6 +143,12 @@ void bfa_values_decr_array(struct bfa_state *state, struct bfa_values *values) {
   LLVMBuildStore(state->builder, curr, values->ptr);
 }
 
+void bfa_values_set_125(struct bfa_state *state, struct bfa_values *values) {
+  LLVMTypeRef i32 = LLVMInt32TypeInContext(state->context);
+  LLVMValueRef data125 = LLVMConstInt(i32, 125, 0);
+  LLVMBuildStore(state->builder, data125, values->ptr);
+}
+
 //putchar
 struct bfa_putchar *bfa_putchar(struct bfa_state *state) {
   struct bfa_putchar *putchar = malloc(sizeof(bfa_putchar));
@@ -270,6 +276,9 @@ void bfa_state_interpret(
       case 'e': {
         bfa_exit(state);
         return;
+      } break;
+      case 'l': {
+        bfa_values_set_125(state, values);
       } break;
       case ' ':
       case '\n':
